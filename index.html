@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="F(ox)Safety provides fast, offline, and effective security tools for creators, including malware scanners and threat dashboards.">
+    <meta name="keywords" content="security tools, malware scanner, threat dashboard, creators, offline security">
+    <title>F(ox)Safety — Security Tools for Creators</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-color: #000000;
+            --text-color: #ffffff;
+            --secondary-text-color: #a0a0a0;
+            --border-color: #2f2f2f;
+            --shadow-color: rgba(0,0,0,0.2);
+            --accent-color: #087ea4;
+            --accent-hover: #005f7f;
+            --green-accent: #00C853;
+            --green-hover: #00964d;
+            --black-button: #1a1a1a;
+            --black-hover: #333333;
+            --purple-background: #6E41E2;
+            --logo-color: #db1c24; /* Original logo color, might be removed or repurposed */
+            --card-background: #2a0d6e;
+            --card-border: #3a1a8a;
+            --card-text: #ffffff;
+            --badge-background: #00C853;
+            --badge-text: #000000;
+            --transition-duration: 0.3s;
+            --dot-color: #00C853;
+        }
+        [data-theme="light"] {
+            --background-color: #ffffff;
+            --text-color: #000000;
+            --secondary-text-color: #4b4b4b;
+            --border-color: #e5e7eb;
+            --shadow-color: rgba(0,0,0,0.05);
+            --accent-color: #087ea4;
+            --accent-hover: #005f7f;
+            --green-accent: #00C853;
+            --green-hover: #00964d;
+            --black-button: #f5f5f5;
+            --black-hover: #e0e0e0;
+            --purple-background: #6E41E2;
+            --logo-color: #db1c24;
+            --card-background: #ffffff;
+            --card-border: #e5e7eb;
+            --card-text: #000000;
+            --badge-background: #00C853;
+            --badge-text: #000000;
+            --dot-color: #00C853;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            line-height: 1.6;
+            font-size: 16px;
+            transition: background-color var(--transition-duration) ease, color var(--transition-duration) ease;
+            scroll-behavior: smooth;
+        }
+        header {
+            background-color: var(--background-color);
+            padding: 16px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color var(--transition-duration) ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 10px var(--shadow-color);
+        }
+        header.scrolled {
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* No animation or gradient background on the container itself */
+        }
+        /* New styles for the image logo */
+        .logo-image {
+            width: 32px; /* Adjust size as needed */
+            height: 32px; /* Adjust size as needed */
+            vertical-align: middle;
+            transition: transform 0.3s ease;
+        }
+        .logo-image:hover {
+            transform: scale(1.1); /* Simple hover effect */
+        }
+
+        /* The old .logo-square class is removed as it's no longer needed for the image */
+        /* If you want to keep the square shape around the image, you'd adjust this */
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 16px;
+            margin: 0;
+            padding: 0;
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--secondary-text-color);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        nav a:hover {
+            color: var(--text-color);
+            transform: translateY(-2px);
+        }
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+        }
+        .theme-toggle:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: rotate(15deg);
+        }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-color);
+            transition: fill 0.3s ease;
+        }
+        .theme-toggle:hover svg {
+            fill: #ffffff;
+        }
+        .hero {
+            background-color: var(--background-color);
+            padding: 100px 5%;
+            position: relative;
+            overflow: hidden;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+        }
+        .dots {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--dot-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: dot-move 20s linear infinite;
+            opacity: 0.1;
+        }
+        @keyframes dot-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        .hero-content {
+            max-width: 600px;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .hero-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hero-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--green-accent);
+            transition: transform 0.5s ease;
+        }
+        .hero-tag:hover {
+            transform: scale(1.05);
+        }
+        .hero-tag-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--green-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--background-color);
+            font-size: 24px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .hero h1 {
+            font-size: 60px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, var(--text-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 20px;
+            font-weight: 400;
+            color: var(--secondary-text-color);
+            margin-bottom: 32px;
+            line-height: 1.4;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+        }
+        .cta-button {
+            padding: 12px 24px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+        .cta-green {
+            background-color: var(--green-accent);
+            color: var(--background-color);
+        }
+        .cta-green:hover {
+            background-color: var(--green-hover);
+        }
+        .cta-black {
+            background-color: var(--black-button);
+            color: var(--text-color);
+        }
+        .cta-black:hover {
+            background-color: var(--black-hover);
+        }
+        .hero-screenshot {
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px var(--shadow-color);
+            z-index: 1;
+            transition: transform 0.5s ease;
+        }
+        .hero-screenshot:hover {
+            transform: translateY(-50%) scale(1.02);
+        }
+        .section-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .tab {
+            padding: 8px 16px;
+            border-radius: 24px;
+            background-color: var(--black-button);
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .tab.active {
+            background-color: var(--purple-background);
+        }
+        .tab:hover {
+            background-color: var(--black-hover);
+            transform: translateY(-2px);
+        }
+        .product-section {
+            padding: 64px 5%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .product-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .product-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .product-section p {
+            font-size: 20px;
+            color: var(--secondary-text-color);
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .product-card {
+            background-color: var(--card-background);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: left;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 16px var(--shadow-color);
+        }
+        .product-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--logo-color), var(--purple-background));
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover .product-icon {
+            transform: rotate(10deg);
+        }
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .product-desc {
+            font-size: 14px;
+            color: var(--secondary-text-color);
+        }
+        .badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: var(--badge-background);
+            color: var(--badge-text);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            animation: badgePulse 1.5s infinite;
+        }
+        @keyframes badgePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .explore-link {
+            display: block;
+            margin-top: 32px;
+            color: var(--secondary-text-color);
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .explore-link:hover {
+            color: var(--text-color);
+            transform: translateX(5px);
+        }
+        .trusted-section {
+            padding: 64px 5%;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .trusted-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .trusted-text {
+            flex: 1;
+        }
+        .trusted-text h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .trusted-text h3 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .trusted-text p {
+            font-size: 16px;
+            color: var(--secondary-text-color);
+        }
+        .ecosystem-section {
+            background: linear-gradient(to bottom, var(--purple-background), #000000);
+            padding: 64px 5%;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-radius: 16px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .ecosystem-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .ecosystem-text {
+            flex: 1;
+        }
+        .ecosystem-text h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .ecosystem-text p {
+            font-size: 16px;
+            color: var(--secondary-text-color);
+            margin-bottom: 24px;
+        }
+        .ecosystem-button {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 12px 24px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .ecosystem-button:hover {
+            background-color: #333333;
+            transform: translateY(-3px);
+        }
+        .ecosystem-image {
+            flex: 1;
+            height: 200px;
+            background: linear-gradient(135deg, var(--logo-color), var(--purple-background));
+            border-radius: 16px;
+            animation: gradientShift 5s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .features-section {
+            padding: 64px 5%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .features-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .features-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .features-section p {
+            font-size: 20px;
+            color: var(--secondary-text-color);
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background-color: var(--card-background);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: left;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 16px var(--shadow-color);
+        }
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-color), var(--green-accent));
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+        .feature-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .feature-desc {
+            font-size: 14px;
+            color: var(--secondary-text-color);
+        }
+        .cta-section {
+            padding: 64px 5%;
+            text-align: center;
+            background: linear-gradient(135deg, var(--purple-background), var(--accent-color));
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .cta-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .cta-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+        .cta-section p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 32px;
+        }
+        .cta-section .cta-button {
+            background-color: #ffffff;
+            color: var(--purple-background);
+        }
+        .cta-section .cta-button:hover {
+            background-color: #f0f0f0;
+        }
+        footer {
+            background-color: var(--background-color);
+            padding: 32px 5%;
+            text-align: center;
+            font-size: 14px;
+            color: var(--secondary-text-color);
+        }
+        footer p {
+            margin: 0;
+        }
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+            }
+            nav ul {
+                flex-direction: column;
+            }
+            .hero {
+                flex-direction: column;
+                padding: 80px 5%;
+            }
+            .hero-screenshot {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                width: 100%;
+                margin-top: 32px;
+            }
+            .trusted-section {
+                flex-direction: column;
+            }
+            .ecosystem-section {
+                flex-direction: column;
+            }
+            .product-grid, .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <header>
+        <div class="logo-container">
+            <img src="assets/foxsafetylogo.png"alt="F(ox)Safety Logo" class="logo-image">
+            <a href="index.html" class="logo-text">F(ox)Safety</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 3h7v7H3V3zm2 2v3h3V5H5zm7-2h7v7h-7V3zm2 2v3h3V5h-3zm7-2h7v7h-7V3zm2 2v3h3V5h-3zm-9 6c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm0 0"/>
+                    <path d="M18 15l-1.5-1.5-2.5 2.5-1-1 2.5-2.5L14 11h7v7l-1.5-1.5-2.5 2.5-1-1 2.5-2.5z"/>
+                </svg>
+            </button>
+        </nav>
+    </header>
+    <main>
+        <section class="hero">
+            <div class="dots"></div>
+            <div class="hero-content">
+                <div class="hero-tag">
+                    <div class="hero-tag-icon">+</div>
+                    F(ox)Safety
+                </div>
+                <h1>Security tools built for creators</h1>
+                <p>Fast, offline, and brutally effective. From malware scanners to threat dashboards — we build what others pretend to.</p>
+                <div class="hero-buttons">
+                    <a href="products.html" class="cta-button cta-green">Our products</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="product-section">
+            <h2>Enjoy securing your creations</h2>
+            <p>A rich suite of tools that provide an exceptional security experience</p>
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-icon"></div>
+                    <div class="product-name">Malvinse</div>
+                    <div class="product-desc">Offline malware scanner with real cleaning logic and VirusTotal integration.</div>
+                </div>
+                <div class="product-card">
+                    <div class="product-icon"></div>
+                    <div class="product-name">ThreatBoard</div>
+                    <div class="product-desc">Dashboard for tracking scan history, threat types, and system health over time.</div>
+                    <span class="badge">Coming Soon</span>
+                </div>
+            </div>
+            <a href="products.html" class="explore-link">Explore F(ox)Safety tools →</a>
+        </section>
+
+        <section class="features-section">
+            <h2>Key Features</h2>
+            <p>Discover the powerful features that make F(ox)Safety the best choice for creators.</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-name">Offline Scanning</div>
+                    <div class="feature-desc">Scan your files without an internet connection for maximum privacy.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-name">VirusTotal Integration</div>
+                    <div class="feature-desc">Get detailed reports from multiple antivirus engines.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-name">Real Cleaning Logic</div>
+                    <div class="feature-desc">Automatically clean detected threats with advanced algorithms.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-name">Threat Dashboard</div>
+                    <div class="feature-desc">Visualize your security status and history over time.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="trusted-section">
+            <div class="trusted-text">
+                <h2>Checked and used</h2>
+                <h3>Ready for actual use right out of the box?</h3>
+                <p>No bloat, no dependencies, no fake scans. Just real tools that clean, detect, and protect.</p>
+            </div>
+        </section>
+
+        <section class="ecosystem-section">
+            <div class="ecosystem-text">
+                <h2>The F(ox)Safety Ecosystem</h2>
+                <p>A powerful set of tools, libraries, and integrations built around security to help you develop safe applications efficiently.</p>
+                <a href="products.html" class="ecosystem-button">Explore</a>
+            </div>
+            <div class="ecosystem-image"></div>
+        </section>
+
+        <section class="cta-section">
+            <h2>Get Started Today</h2>
+            <p>Discover our projects</p>
+            <a href="products.html" class="cta-button">Discover Our Products</a>
+        </section>
+    </main>
+    <footer>
+        <p>© 2025 F(ox)Safety. All rights reserved.</p>
+    </footer>
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.hero-content, .product-section, .features-section, .trusted-section, .ecosystem-section, .cta-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

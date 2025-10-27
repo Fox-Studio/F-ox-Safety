@@ -1,0 +1,2904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="F(ox)Safety provides fast, offline, and effective security tools for creators, including malware scanners and threat dashboards.">
+    <meta name="keywords" content="security tools, malware scanner, threat dashboard, creators, offline security">
+    <title>F(ox)Safety — Security Tools for Creators</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-color: #000000;
+            --text-color: #ffffff;
+            --secondary-text-color: #a0a0a0;
+            --border-color: #2f2f2f;
+            --shadow-color: rgba(0,0,0,0.2);
+            --accent-color: #087ea4;
+            --accent-hover: #005f7f;
+            --green-accent: #00C853;
+            --green-hover: #00964d;
+            --black-button: #1a1a1a;
+            --black-hover: #333333;
+            --purple-background: #6E41E2;
+            --logo-color: #db1c24; /* Original logo color, might be removed or repurposed */
+            --card-background: #2a0d6e;
+            --card-border: #3a1a8a;
+            --card-text: #ffffff;
+            --badge-background: #00C853;
+            --badge-text: #000000;
+            --transition-duration: 0.3s;
+            --dot-color: #00C853;
+            --radius: 12px;
+            --radius-pill: 999px;
+            --shadow-1: 0 8px 24px rgba(0,0,0,0.25);
+            --shadow-2: 0 12px 32px rgba(0,0,0,0.35);
+            --surface-1: rgba(255,255,255,0.04);
+            --surface-2: rgba(255,255,255,0.06);
+        }
+        [data-theme="light"] {
+            --background-color: #ffffff;
+            --text-color: #000000;
+            --secondary-text-color: #4b4b4b;
+            --border-color: #e5e7eb;
+            --shadow-color: rgba(0,0,0,0.05);
+            --accent-color: #087ea4;
+            --accent-hover: #005f7f;
+            --green-accent: #00C853;
+            --green-hover: #00964d;
+            --black-button: #f5f5f5;
+            --black-hover: #e0e0e0;
+            --purple-background: #6E41E2;
+            --logo-color: #db1c24;
+            --card-background: #ffffff;
+            --card-border: #e5e7eb;
+            --card-text: #000000;
+            --badge-background: #00C853;
+            --badge-text: #000000;
+            --dot-color: #00C853;
+            --surface-1: rgba(0,0,0,0.04);
+            --surface-2: rgba(0,0,0,0.06);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            line-height: 1.6;
+            font-size: 16px;
+            transition: background-color var(--transition-duration) ease, color var(--transition-duration) ease;
+            scroll-behavior: smooth;
+        }
+        header {
+            background-color: var(--background-color);
+            padding: 16px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color var(--transition-duration) ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 10px var(--shadow-color);
+        }
+        header.scrolled {
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* No animation or gradient background on the container itself */
+        }
+        /* New styles for the image logo */
+        .logo-image {
+            width: 32px; /* Adjust size as needed */
+            height: 32px; /* Adjust size as needed */
+            vertical-align: middle;
+            transition: transform 0.3s ease;
+        }
+        .logo-image:hover {
+            transform: scale(1.1); /* Simple hover effect */
+        }
+
+        /* The old .logo-square class is removed as it's no longer needed for the image */
+        /* If you want to keep the square shape around the image, you'd adjust this */
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 16px;
+            margin: 0;
+            padding: 0;
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--secondary-text-color);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            padding: 8px 14px;
+            border-radius: var(--radius-pill);
+            background-color: transparent;
+        }
+        nav a:hover {
+            color: var(--text-color);
+            transform: translateY(-2px);
+            background-color: rgba(135, 65, 226, 0.10);
+            box-shadow: 0 6px 14px rgba(135,65,226,0.15);
+        }
+        nav a.active {
+            color: var(--text-color);
+            background-color: rgba(135, 65, 226, 0.20);
+            box-shadow: 0 8px 20px rgba(135,65,226,0.22);
+        }
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: var(--purple-background);
+            border-radius: 50%;
+            animation: navDotPulse 2s infinite;
+        }
+        @keyframes navDotPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+            50% { transform: translateX(-50%) scale(1.5); opacity: 0.7; }
+        }
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+        }
+        .theme-toggle:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: rotate(15deg);
+        }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-color);
+            transition: fill 0.3s ease;
+        }
+        .theme-toggle:hover svg {
+            fill: #ffffff;
+        }
+        .hero {
+            background-color: var(--background-color);
+            padding: 100px 5%;
+            position: relative;
+            overflow: hidden;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 520px;
+            height: 520px;
+            background: radial-gradient(closest-side, rgba(110,65,226,0.35), transparent 70%),
+                        radial-gradient(closest-side, rgba(0,200,83,0.25), transparent 70%);
+            filter: blur(20px);
+            border-radius: 50%;
+            animation: floatBlob 12s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes floatBlob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-40px, 30px) scale(1.06); }
+        }
+        .dots {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--dot-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: dot-move 20s linear infinite;
+            opacity: 0.1;
+        }
+        @keyframes dot-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        .hero-content {
+            max-width: 600px;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .hero-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hero-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--green-accent);
+            transition: transform 0.5s ease;
+        }
+        .hero-tag:hover {
+            transform: scale(1.05);
+        }
+        .hero-tag-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--green-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--background-color);
+            font-size: 24px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .hero h1 {
+            font-size: 60px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, var(--text-color), var(--accent-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 60px;
+            background-color: var(--accent-color);
+            animation: blink 1s infinite;
+            margin-left: 4px;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        .hero p {
+            font-size: 20px;
+            font-weight: 400;
+            color: var(--secondary-text-color);
+            margin-bottom: 32px;
+            line-height: 1.4;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+        }
+        .cta-button {
+            padding: 14px 28px;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform .25s ease, box-shadow .25s ease, background-color .25s ease, color .25s ease;
+            border: 1px solid transparent;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            will-change: transform;
+        }
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.28);
+        }
+        .cta-button:active { transform: translateY(0) scale(0.98); }
+        .cta-green {
+            background: linear-gradient(180deg, var(--green-accent), var(--green-hover));
+            color: var(--background-color);
+        }
+        .cta-green:hover {
+            background: linear-gradient(180deg, var(--green-hover), var(--green-accent));
+        }
+        .cta-black {
+            background: var(--black-button);
+            color: var(--text-color);
+        }
+        .cta-black:hover {
+            background: var(--black-hover);
+        }
+        .hero-screenshot {
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px var(--shadow-color);
+            z-index: 1;
+            transition: transform 0.5s ease;
+        }
+        .hero-screenshot:hover {
+            transform: translateY(-50%) scale(1.02);
+        }
+        .section-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .tab {
+            padding: 8px 16px;
+            border-radius: 24px;
+            background-color: var(--black-button);
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .tab.active {
+            background-color: var(--purple-background);
+        }
+        .tab:hover {
+            background-color: var(--black-hover);
+            transform: translateY(-2px);
+        }
+        .product-section {
+            padding: 64px 5%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .product-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .product-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .product-section p {
+            font-size: 20px;
+            color: var(--secondary-text-color);
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .product-card {
+            background: linear-gradient(180deg, var(--surface-1), var(--surface-2));
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            padding: 16px;
+            text-align: left;
+            position: relative;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+            cursor: pointer;
+            overflow: hidden;
+            backdrop-filter: saturate(120%) blur(8px);
+        }
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(135, 65, 226, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        .product-card:hover::before {
+            left: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: var(--accent-color);
+            box-shadow: var(--shadow-2);
+        }
+        .product-card:active {
+            transform: translateY(-3px) scale(0.98);
+        }
+        .product-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--logo-color), var(--purple-background));
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover .product-icon {
+            transform: rotate(10deg);
+        }
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .product-desc {
+            font-size: 14px;
+            color: var(--secondary-text-color);
+        }
+        .badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: var(--badge-background);
+            color: var(--badge-text);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            animation: badgePulse 1.5s infinite;
+        }
+        @keyframes badgePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .explore-link {
+            display: block;
+            margin-top: 32px;
+            color: var(--secondary-text-color);
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .explore-link:hover {
+            color: var(--text-color);
+            transform: translateX(5px);
+        }
+        .trusted-section {
+            padding: 64px 5%;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .trusted-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .trusted-text {
+            flex: 1;
+        }
+        .trusted-text h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .trusted-text h3 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .trusted-text p {
+            font-size: 16px;
+            color: var(--secondary-text-color);
+        }
+        .ecosystem-section {
+            background: linear-gradient(to bottom, var(--purple-background), #000000);
+            padding: 64px 5%;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-radius: 16px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .ecosystem-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .ecosystem-text {
+            flex: 1;
+        }
+        .ecosystem-text h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .ecosystem-text p {
+            font-size: 16px;
+            color: var(--secondary-text-color);
+            margin-bottom: 24px;
+        }
+        .ecosystem-button {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 12px 24px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .ecosystem-button:hover {
+            background-color: #333333;
+            transform: translateY(-3px);
+        }
+        .ecosystem-image {
+            flex: 1;
+            height: 200px;
+            background: linear-gradient(135deg, var(--logo-color), var(--purple-background));
+            border-radius: 16px;
+            animation: gradientShift 5s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .features-section {
+            padding: 64px 5%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .features-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .features-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .features-section p {
+            font-size: 20px;
+            color: var(--secondary-text-color);
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background-color: var(--card-background);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: left;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(8, 126, 164, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        .feature-card:hover::before {
+            left: 100%;
+        }
+        .feature-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 8px 16px var(--shadow-color);
+            border-color: var(--accent-color);
+        }
+        .feature-card:active {
+            transform: translateY(-3px) scale(0.98);
+        }
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-color), var(--green-accent));
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+        .feature-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .feature-desc {
+            font-size: 14px;
+            color: var(--secondary-text-color);
+        }
+        .stats-section {
+            padding: 64px 5%;
+            background-color: var(--background-color);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .stats-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 24px;
+            background-color: var(--card-background);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px var(--shadow-color);
+        }
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--green-accent);
+            margin-bottom: 8px;
+            display: block;
+        }
+        .stat-label {
+            font-size: 16px;
+            color: var(--secondary-text-color);
+            font-weight: 500;
+        }
+        .cta-section {
+            padding: 64px 5%;
+            text-align: center;
+            background: linear-gradient(135deg, var(--purple-background), var(--accent-color));
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .cta-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .cta-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+        .cta-section p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 32px;
+        }
+        .cta-section .cta-button {
+            background-color: #ffffff;
+            color: var(--purple-background);
+        }
+        .cta-section .cta-button:hover {
+            background-color: #f0f0f0;
+        }
+        footer {
+            background-color: var(--background-color);
+            padding: 32px 5%;
+            text-align: center;
+            font-size: 14px;
+            color: var(--secondary-text-color);
+        }
+        footer p {
+            margin: 0;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-content {
+            background-color: var(--card-background);
+            margin: 5% auto;
+            padding: 32px;
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .close {
+            color: var(--secondary-text-color);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .close:hover {
+            color: var(--text-color);
+        }
+        .modal h3 {
+            margin-top: 0;
+            color: var(--text-color);
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        .modal p {
+            color: var(--secondary-text-color);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .modal-features {
+            list-style: none;
+            padding: 0;
+        }
+        .modal-features li {
+            padding: 8px 0;
+            color: var(--secondary-text-color);
+            position: relative;
+            padding-left: 24px;
+        }
+        .modal-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--green-accent);
+            font-weight: bold;
+        }
+        
+        /* Testimonials Carousel */
+        .testimonials-section {
+            padding: 80px 5%;
+            background: linear-gradient(135deg, var(--card-background), var(--background-color));
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .testimonials-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .testimonials-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .testimonials-section p {
+            font-size: 20px;
+            color: var(--secondary-text-color);
+            text-align: center;
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .testimonials-carousel {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 16px;
+        }
+        .testimonials-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        .testimonial-card {
+            min-width: 100%;
+            background-color: var(--card-background);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 16px var(--shadow-color);
+        }
+        .testimonial-quote {
+            font-size: 18px;
+            color: var(--text-color);
+            font-style: italic;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-color), var(--green-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .author-info h4 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--text-color);
+        }
+        .author-info p {
+            margin: 4px 0 0 0;
+            font-size: 14px;
+            color: var(--secondary-text-color);
+        }
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 32px;
+        }
+        .carousel-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-color);
+            background: transparent;
+            color: var(--accent-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+        .carousel-btn:hover {
+            background-color: var(--accent-color);
+            color: white;
+            transform: scale(1.1);
+        }
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--secondary-text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .carousel-dot.active {
+            background-color: var(--accent-color);
+            transform: scale(1.2);
+        }
+        
+        /* Pricing Section */
+        .pricing-section {
+            padding: 80px 5%;
+            background-color: var(--background-color);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .pricing-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .pricing-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .pricing-section p {
+            font-size: 20px;
+            color: var(--secondary-text-color);
+            text-align: center;
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .pricing-card {
+            background-color: var(--card-background);
+            border: 2px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-color);
+            box-shadow: 0 12px 24px var(--shadow-color);
+        }
+        .pricing-card.featured {
+            border-color: var(--green-accent);
+            transform: scale(1.05);
+        }
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-8px);
+        }
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--green-accent), var(--accent-color));
+            color: white;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .pricing-plan {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 8px;
+        }
+        .pricing-period {
+            font-size: 16px;
+            color: var(--secondary-text-color);
+            margin-bottom: 24px;
+        }
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 32px;
+        }
+        .pricing-features li {
+            padding: 8px 0;
+            color: var(--secondary-text-color);
+            position: relative;
+            padding-left: 24px;
+        }
+        .pricing-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--green-accent);
+            font-weight: bold;
+        }
+        .pricing-btn {
+            width: 100%;
+            padding: 12px 24px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .pricing-btn.primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .pricing-btn.primary:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        .pricing-btn.secondary {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+        }
+        .pricing-btn.secondary:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            padding: 80px 5%;
+            background: linear-gradient(135deg, var(--card-background), var(--background-color));
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .faq-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .faq-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .faq-section p {
+            font-size: 20px;
+            color: var(--secondary-text-color);
+            text-align: center;
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .faq-item {
+            background-color: var(--card-background);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .faq-item:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+        .faq-question {
+            padding: 20px 24px;
+            background-color: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .faq-question:hover {
+            background-color: rgba(135, 65, 226, 0.05);
+        }
+        .faq-icon {
+            font-size: 20px;
+            color: var(--accent-color);
+            transition: transform 0.3s ease;
+        }
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+        .faq-answer {
+            padding: 0 24px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: rgba(135, 65, 226, 0.02);
+        }
+        .faq-item.active .faq-answer {
+            padding: 20px 24px;
+            max-height: 200px;
+        }
+        .faq-answer p {
+            margin: 0;
+            color: var(--secondary-text-color);
+            line-height: 1.6;
+        }
+        
+        /* Newsletter Section */
+        .newsletter-section {
+            padding: 80px 5%;
+            background: linear-gradient(135deg, var(--purple-background), var(--accent-color));
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .newsletter-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .newsletter-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+            color: white;
+        }
+        .newsletter-section p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .newsletter-form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .newsletter-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 24px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        .newsletter-input:focus {
+            outline: none;
+            background-color: white;
+            transform: scale(1.02);
+        }
+        .newsletter-input::placeholder {
+            color: var(--secondary-text-color);
+        }
+        .newsletter-btn {
+            padding: 16px 32px;
+            background-color: white;
+            color: var(--purple-background);
+            border: none;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .newsletter-btn:hover {
+            background-color: var(--green-accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Updates Section */
+        .updates-section {
+            padding: 80px 5%;
+            background: linear-gradient(135deg, var(--card-background), var(--background-color));
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .updates-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .updates-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .updates-section p {
+            font-size: 20px;
+            color: var(--secondary-text-color);
+            text-align: center;
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .updates-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .updates-filter {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: var(--black-button);
+            color: var(--text-color);
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .filter-btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        .updates-grid {
+            display: grid;
+            gap: 24px;
+        }
+        .update-card {
+            background-color: var(--card-background);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .update-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+        .update-card:hover::before {
+            width: 8px;
+        }
+        .update-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px var(--shadow-color);
+            border-color: var(--accent-color);
+        }
+        .update-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        .update-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+        }
+        .update-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .update-status.planned {
+            background-color: rgba(8, 126, 164, 0.2);
+            color: var(--accent-color);
+        }
+        .update-status.in-progress {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        .update-status.completed {
+            background-color: rgba(0, 200, 83, 0.2);
+            color: var(--green-accent);
+        }
+        .update-status.announcement {
+            background-color: rgba(135, 65, 226, 0.2);
+            color: var(--purple-background);
+        }
+        .update-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--secondary-text-color);
+        }
+        .update-date {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .update-category {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .update-content {
+            color: var(--secondary-text-color);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .update-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .update-tag {
+            padding: 4px 8px;
+            background-color: rgba(135, 65, 226, 0.1);
+            color: var(--purple-background);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        /* Admin Update Form */
+        .admin-update-form {
+            background-color: var(--card-background);
+            border: 2px solid var(--accent-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            display: none;
+        }
+        .admin-update-form.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .admin-form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .admin-form-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+        }
+        .admin-toggle-btn {
+            padding: 8px 16px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .admin-toggle-btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(8, 126, 164, 0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        .btn-primary {
+            padding: 12px 24px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            padding: 12px 24px;
+            background-color: transparent;
+            color: var(--secondary-text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: var(--black-button);
+            color: var(--text-color);
+        }
+        
+        /* Admin Delete Functionality */
+        .update-card.admin-mode {
+            position: relative;
+        }
+        .update-card.admin-mode:hover .admin-delete-btn {
+            opacity: 1;
+        }
+        .admin-delete-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background-color: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        .admin-delete-btn:hover {
+            background-color: #dc3545;
+            transform: scale(1.1);
+        }
+        .admin-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .admin-mode-toggle:hover {
+            background-color: var(--accent-hover);
+            transform: scale(1.1);
+        }
+        .admin-mode-toggle.active {
+            background-color: #dc3545;
+        }
+        .admin-mode-toggle.active:hover {
+            background-color: #c82333;
+        }
+        
+        /* Confirmation Modal */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .confirmation-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .confirmation-content {
+            background-color: var(--card-background);
+            padding: 32px;
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+        .confirmation-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 16px;
+        }
+        .confirmation-message {
+            color: var(--secondary-text-color);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        .confirmation-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .btn-danger {
+            padding: 12px 24px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+        .btn-cancel {
+            padding: 12px 24px;
+            background-color: transparent;
+            color: var(--secondary-text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-cancel:hover {
+            background-color: var(--black-button);
+            color: var(--text-color);
+        }
+        
+        /* Authentication System */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .auth-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-content {
+            background-color: var(--card-background);
+            padding: 32px;
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+        .auth-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 16px;
+        }
+        .auth-subtitle {
+            color: var(--secondary-text-color);
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+        .auth-form {
+            text-align: left;
+        }
+        .auth-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-size: 14px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(8, 126, 164, 0.1);
+        }
+        .auth-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .auth-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .auth-btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .auth-btn-primary:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        .auth-btn-secondary {
+            background-color: transparent;
+            color: var(--secondary-text-color);
+            border: 1px solid var(--border-color);
+        }
+        .auth-btn-secondary:hover {
+            background-color: var(--black-button);
+            color: var(--text-color);
+        }
+        .auth-status {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+        .auth-status.success {
+            background-color: rgba(0, 200, 83, 0.1);
+            color: var(--green-accent);
+            border: 1px solid rgba(0, 200, 83, 0.2);
+        }
+        .auth-status.error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+        .admin-info {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background-color: var(--card-background);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: var(--secondary-text-color);
+            display: none;
+            z-index: 1000;
+            max-width: 200px;
+        }
+        .admin-info.active {
+            display: block;
+        }
+        .admin-info .admin-email {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--secondary-text-color);
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: underline;
+            margin-top: 4px;
+        }
+        .logout-btn:hover {
+            color: var(--text-color);
+        }
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+            }
+            nav ul {
+                flex-direction: column;
+            }
+            .hero {
+                flex-direction: column;
+                padding: 80px 5%;
+            }
+            .hero-screenshot {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                width: 100%;
+                margin-top: 32px;
+            }
+            .trusted-section {
+                flex-direction: column;
+            }
+            .ecosystem-section {
+                flex-direction: column;
+            }
+            .product-grid, .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Accessibility: clear keyboard focus */
+        :focus-visible {
+            outline: 3px solid var(--accent-color);
+            outline-offset: 2px;
+            border-radius: 6px;
+        }
+
+        /* Respect reduced motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Scroll-to-top button */
+        .scroll-top {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: var(--card-background);
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 12px var(--shadow-color);
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: opacity .2s ease, transform .2s ease;
+            z-index: 1200;
+        }
+        .scroll-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- Admin Mode Toggle Button -->
+    <button class="admin-mode-toggle" id="adminModeToggle" onclick="toggleAdminMode()" title="Toggle Admin Mode">
+        ⚙️
+    </button>
+
+    <!-- Confirmation Modal -->
+    <div class="confirmation-modal" id="confirmationModal">
+        <div class="confirmation-content">
+            <h3 class="confirmation-title">Delete Update</h3>
+            <p class="confirmation-message" id="confirmationMessage">Are you sure you want to delete this update? This action cannot be undone.</p>
+            <div class="confirmation-actions">
+                <button class="btn-cancel" onclick="closeConfirmationModal()">Cancel</button>
+                <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-content">
+            <h3 class="auth-title">Admin Access</h3>
+            <p class="auth-subtitle">Enter your email address to access admin features</p>
+            <form class="auth-form" id="authForm">
+                <input type="email" class="auth-input" id="authEmail" placeholder="Enter your email address" required>
+                <div class="auth-status" id="authStatus"></div>
+                <div class="auth-actions">
+                    <button type="button" class="auth-btn auth-btn-secondary" onclick="closeAuthModal()">Cancel</button>
+                    <button type="submit" class="auth-btn auth-btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Info Panel -->
+    <div class="admin-info" id="adminInfo">
+        <div>Logged in as:</div>
+        <div class="admin-email" id="adminEmail"></div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <header>
+        <div class="logo-container">
+            <img src="./assets/foxsafetylogo.png" alt="F(ox)Safety Logo" class="logo-image">
+            <a href="index.html" class="logo-text">F(ox)Safety</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#products" class="nav-link">Products</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#ecosystem" class="nav-link">Ecosystem</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 3h7v7H3V3zm2 2v3h3V5H5zm7-2h7v7h-7V3zm2 2v3h3V5h-3zm7-2h7v7h-7V3zm2 2v3h3V5h-3zm-9 6c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm0 0"/>
+                    <path d="M18 15l-1.5-1.5-2.5 2.5-1-1 2.5-2.5L14 11h7v7l-1.5-1.5-2.5 2.5-1-1 2.5-2.5z"/>
+                </svg>
+            </button>
+        </nav>
+    </header>
+    <main>
+        <section id="home" class="hero">
+            <div class="dots"></div>
+            <div class="hero-content">
+                <div class="hero-tag">
+                    <div class="hero-tag-icon">+</div>
+                    F(ox)Safety
+                </div>
+                <h1 id="hero-title">Security tools built for creators</h1>
+                <p id="hero-description">Fast, offline, and brutally effective. From malware scanners to threat dashboards — we build what others pretend to.</p>
+                <div class="hero-buttons">
+                    <a href="#products" class="cta-button cta-green">Our products</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="products" class="product-section">
+            <h2>Enjoy securing your creations</h2>
+            <p>A rich suite of tools that provide an exceptional security experience</p>
+            <div class="product-grid">
+                <div class="product-card" data-product="malvinse">
+                    <div class="product-icon"></div>
+                    <div class="product-name">Malvinse</div>
+                    <div class="product-desc">Offline malware scanner with real cleaning logic and VirusTotal integration.</div>
+                </div>
+                <div class="product-card" data-product="threatboard">
+                    <div class="product-icon"></div>
+                    <div class="product-name">ThreatBoard</div>
+                    <div class="product-desc">Dashboard for tracking scan history, threat types, and system health over time.</div>
+                    <span class="badge">Coming Soon</span>
+                </div>
+            </div>
+            <a href="products.html" class="explore-link">Explore F(ox)Safety tools →</a>
+        </section>
+
+        <section id="features" class="features-section">
+            <h2>Key Features</h2>
+            <p>Discover the powerful features that make F(ox)Safety the best choice for creators.</p>
+            <div class="features-grid">
+                <div class="feature-card" data-feature="offline">
+                    <div class="feature-icon"></div>
+                    <div class="feature-name">No data is collected</div>
+                     <div class="feature-desc">We do not collect any data or store it anywhere and you data is not shared with 3rd party companies</div>
+                </div>
+                <div class="feature-card" data-feature="virustotal">
+                    <div class="feature-icon"></div>
+                    <div class="feature-name">Integrations with more advanced software</div>
+                    <div class="feature-desc">We integrate with softwares that are more advanced then our products so you get the full potentional</div>
+                </div>
+                <div class="feature-card" data-feature="cleaning">
+                    <div class="feature-icon"></div>
+                    <div class="feature-name">Products will be updated</div>
+                    <div class="feature-desc">We update our products frequently and if we stop updating them we post it on our socials and tell it on our websites update section</div>
+                </div>
+                <div class="feature-card" data-feature="dashboard">
+                    <div class="feature-icon"></div>
+                    <div class="feature-name">Every products source code is given</div>
+                    <div class="feature-desc">We give our products source code to everyone for free but we do not give the source code of products that can be hacked upon giving the code</div>
+                </div>
+            </div>
+        </section>
+        <section class="trusted-section">
+            <div class="trusted-text">
+                <h2>Checked and used</h2>
+                <h3>Ready for actual use right out of the box?</h3>
+                <p>No bloat, no dependencies, no fake scans. Just real tools that clean, detect, and protect.</p>
+            </div>
+        </section>
+ 
+        <section id="ecosystem" class="ecosystem-section">
+            <div class="ecosystem-text">
+                <h2>The F(ox)Safety Ecosystem</h2>
+                <p>A powerful set of tools, libraries, and integrations built around security to help you develop safe applications efficiently.</p>
+                <a href="products.html" class="ecosystem-button">Explore</a>
+            </div>
+            <div class="ecosystem-image"></div>
+        </section>
+
+        <section class="cta-section">
+            <h2>Get Started Today</h2>
+            <p>Discover our projects</p>
+            <a href="products.html" class="cta-button">Discover Our Products</a>
+        </section>
+    </main>
+    <footer>
+        <p> 2025 F(ox)Safety. All rights reserved.</p>
+    </footer>
+
+    <button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top" title="Scroll to top">↑</button>
+
+    <!-- Modal for product details -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <p id="modalDescription"></p>
+            <ul class="modal-features" id="modalFeatures"></ul>
+        </div>
+    </div>
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Add rotation animation to theme toggle
+            const themeToggle = document.querySelector('.theme-toggle');
+            themeToggle.style.transform = 'rotate(180deg)';
+            setTimeout(() => {
+                themeToggle.style.transform = '';
+            }, 300);
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        // Smooth scrolling navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Active navigation highlighting
+        function updateActiveNav() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let currentSection = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.offsetHeight;
+                
+                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Typing animation for hero title
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    // Add blinking cursor
+                    const cursor = document.createElement('span');
+                    cursor.className = 'typing-cursor';
+                    element.appendChild(cursor);
+                }
+            }
+            type();
+        }
+
+        // Animated counters
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const increment = target / (duration / 16); // 60fps
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    counter.textContent = Math.floor(current).toLocaleString();
+                }, 16);
+            });
+        }
+
+        // Modal functionality
+        const modal = document.getElementById('productModal');
+        const closeBtn = document.querySelector('.close');
+        
+        // Product data
+        const productData = {
+            malvinse: {
+                title: 'Malvinse',
+                description: 'Advanced offline malware scanner with real cleaning logic and VirusTotal integration.',
+                features: [
+                    'Offline scanning capabilities',
+                    'Real-time threat detection',
+                    'VirusTotal API integration',
+                    'Detailed scan reports',
+                ]
+            },
+            threatboard: {
+                title: 'ThreatBoard',
+                description: 'Comprehensive dashboard for tracking scan history, threat types, and system health over time.',
+                features: [
+                    'Historical scan data visualization',
+                    'Threat trend analysis',
+                    'System health monitoring',
+                    'Export scan reports',
+                    'Multi-user dashboard access'
+                ]
+            },
+            offline: {
+                title: 'None of your data is collected',
+                description: 'We do not collect any oof your data',
+                features: [
+                    'No data is sent to servers',
+                    'No data is stored locally',
+                    'If we somehow have your data we delete it',
+                    'We respect your privacy',
+                    'We do not share your data with 3rd party companies',
+                ]
+            },
+            virustotal: {
+                title: 'Integrations',
+                description: 'We integrate with softwares that are more advanced',
+                features: [
+                    'Virus Total',
+                    'SOCRadar ThreatFusion',
+                    'AbuseIPDB',
+                    'AlienVault OTX',
+                    'GreyNoise',
+                ]
+            },
+            cleaning: {
+                title: 'Our products are updated Frequently',
+                description: '',
+                features: [
+                    'We update if any error is in our products',
+                    'We update our products to catch the malvares',
+                    'We post updates on our socials',
+                    'We tell before we stop updating a product',
+                ]
+            },
+            dashboard: {
+                title: 'You think you can be hacked from our products?',
+                description: 'We give our products source code to everyone for free',
+                features: [
+                    'Open-source code',
+                    'A tool that is safe to use',
+                    'Our products are free to use',
+                    'We do not save your files anywhere',
+                ]
+            }
+        };
+
+        // Card click handlers
+        document.querySelectorAll('.product-card, .feature-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product') || this.getAttribute('data-feature');
+                if (productData[productId]) {
+                    const data = productData[productId];
+                    document.getElementById('modalTitle').textContent = data.title;
+                    document.getElementById('modalDescription').textContent = data.description;
+                    
+                    const featuresList = document.getElementById('modalFeatures');
+                    featuresList.innerHTML = '';
+                    data.features.forEach(feature => {
+                        const li = document.createElement('li');
+                        li.textContent = feature;
+                        featuresList.appendChild(li);
+                    });
+                    
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+        });
+
+        // Close modal
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Trigger counter animation for stats section
+                    if (entry.target.classList.contains('stats-section')) {
+                        animateCounters();
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Observe all sections
+        document.querySelectorAll('.hero-content, .product-section, .features-section, .trusted-section, .ecosystem-section, .faq-section, .updates-section, .cta-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            
+            updateActiveNav();
+        });
+
+        // Initialize typing animation when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const heroTitle = document.getElementById('hero-title');
+            const originalText = heroTitle.textContent;
+            typeWriter(heroTitle, originalText, 80);
+        });
+
+        // Add parallax effect to dots background
+        window.addEventListener('scroll', () => {
+            const dots = document.querySelector('.dots');
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.5;
+            dots.style.transform = `translateY(${rate}px)`;
+        });
+
+        // Add hover effects to buttons
+        document.querySelectorAll('.cta-button, .ecosystem-button').forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px) scale(1.05)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add ripple effect to cards
+        document.querySelectorAll('.product-card, .feature-card, .stat-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Save updates to localStorage
+        function saveUpdates() {
+            localStorage.setItem('foxsafety-updates', JSON.stringify(updates));
+        }
+
+        // Render updates to the page
+        function renderUpdates(filter = 'all') {
+            const updatesGrid = document.getElementById('updatesGrid');
+            let filteredUpdates = updates;
+            
+            if (filter !== 'all') {
+                filteredUpdates = updates.filter(update => update.status === filter);
+            }
+            
+            // Sort by date (newest first)
+            filteredUpdates.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            updatesGrid.innerHTML = filteredUpdates.map(update => `
+                <div class="update-card" data-status="${update.status}" data-category="${update.category}">
+                    <div class="update-header">
+                        <h3 class="update-title">${update.title}</h3>
+                        <span class="update-status ${update.status}">${update.status.replace('-', ' ')}</span>
+                    </div>
+                    <div class="update-meta">
+                        <div class="update-date">
+                            <span>📅</span>
+                            <span>${update.date}</span>
+                        </div>
+                        <div class="update-category">
+                            <span>🏷️</span>
+                            <span>${getCategoryName(update.category)}</span>
+                        </div>
+                    </div>
+                    <div class="update-content">
+                        ${update.content}
+                    </div>
+                    <div class="update-tags">
+                        ${update.tags.map(tag => `<span class="update-tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Get category display name
+        function getCategoryName(category) {
+            const categories = {
+                'product': 'Product Development',
+                'security': 'Security Updates',
+                'feature': 'New Features',
+                'bugfix': 'Bug Fixes',
+                'announcement': 'General Announcement'
+            };
+            return categories[category] || category;
+        }
+
+        // Toggle admin form
+        function toggleAdminForm() {
+            const form = document.getElementById('adminUpdateForm');
+            const toggleBtn = document.getElementById('adminToggleBtn');
+            
+            if (form.classList.contains('active')) {
+                form.classList.remove('active');
+                toggleBtn.textContent = 'Post New Update';
+            } else {
+                form.classList.add('active');
+                toggleBtn.textContent = 'Hide Form';
+            }
+        }
+
+        // Handle update form submission
+        document.getElementById('updateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const newUpdate = {
+                id: Date.now(),
+                title: formData.get('title'),
+                status: formData.get('status'),
+                category: formData.get('category'),
+                content: formData.get('content'),
+                tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag),
+                date: new Date().toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                })
+            };
+            
+            updates.unshift(newUpdate);
+            saveUpdates();
+            renderUpdates();
+            
+            // Reset form
+            this.reset();
+            toggleAdminForm();
+            
+            // Show success message
+            const submitBtn = this.querySelector('.btn-primary');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Posted!';
+            submitBtn.style.backgroundColor = 'var(--green-accent)';
+            
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.style.backgroundColor = '';
+            }, 2000);
+        });
+
+        // Filter updates
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter updates
+                const filter = this.getAttribute('data-filter');
+                renderUpdates(filter);
+            });
+        });
+
+        // Updates Section Functionality
+        let updates = [];
+        let adminMode = false;
+        let deleteUpdateId = null;
+
+        // Authentication System
+        const authorizedEmails = [
+            'nehasrivastava300684@gmail.com',
+            'wexainbusiness@gmail.com'
+        ];
+        let currentAdmin = null;
+
+        // Load updates from localStorage
+        function loadUpdates() {
+            const savedUpdates = localStorage.getItem('foxsafety-updates');
+            if (savedUpdates) {
+                updates = JSON.parse(savedUpdates);
+            } else {
+                // Start with empty updates array (no sample data)
+                updates = [];
+                saveUpdates();
+            }
+            renderUpdates();
+        }
+
+        // Save updates to localStorage
+        function saveUpdates() {
+            localStorage.setItem('foxsafety-updates', JSON.stringify(updates));
+        }
+
+        // Render updates to the page
+        function renderUpdates(filter = 'all') {
+            const updatesGrid = document.getElementById('updatesGrid');
+            let filteredUpdates = updates;
+            
+            if (filter !== 'all') {
+                filteredUpdates = updates.filter(update => update.status === filter);
+            }
+            
+            // Sort by date (newest first)
+            filteredUpdates.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (filteredUpdates.length === 0) {
+                updatesGrid.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--secondary-text-color);">
+                        <h3>No updates yet</h3>
+                        <p>Check back later for project updates and announcements.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            updatesGrid.innerHTML = filteredUpdates.map(update => `
+                <div class="update-card ${adminMode ? 'admin-mode' : ''}" data-status="${update.status}" data-category="${update.category}" data-id="${update.id}">
+                    ${adminMode ? `<button class="admin-delete-btn" onclick="showDeleteConfirmation(${update.id})" title="Delete Update">×</button>` : ''}
+                    <div class="update-header">
+                        <h3 class="update-title">${update.title}</h3>
+                        <span class="update-status ${update.status}">${update.status.replace('-', ' ')}</span>
+                    </div>
+                    <div class="update-meta">
+                        <div class="update-date">
+                            <span>📅</span>
+                            <span>${update.date}</span>
+                        </div>
+                        <div class="update-category">
+                            <span>🏷️</span>
+                            <span>${getCategoryName(update.category)}</span>
+                        </div>
+                    </div>
+                    <div class="update-content">
+                        ${update.content}
+                    </div>
+                    <div class="update-tags">
+                        ${update.tags.map(tag => `<span class="update-tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Get category display name
+        function getCategoryName(category) {
+            const categories = {
+                'product': 'Product Development',
+                'security': 'Security Updates',
+                'feature': 'New Features',
+                'bugfix': 'Bug Fixes',
+                'announcement': 'General Announcement'
+            };
+            return categories[category] || category;
+        }
+
+        // Toggle admin mode
+        function toggleAdminMode() {
+            adminMode = !adminMode;
+            const toggleBtn = document.getElementById('adminModeToggle');
+            
+            if (adminMode) {
+                toggleBtn.classList.add('active');
+                toggleBtn.innerHTML = '🗑️';
+                toggleBtn.title = 'Exit Admin Mode';
+            } else {
+                toggleBtn.classList.remove('active');
+                toggleBtn.innerHTML = '⚙️';
+                toggleBtn.title = 'Toggle Admin Mode';
+            }
+            
+            renderUpdates();
+        }
+
+        // Show delete confirmation modal
+        function showDeleteConfirmation(updateId) {
+            const update = updates.find(u => u.id === updateId);
+            if (!update) return;
+            
+            deleteUpdateId = updateId;
+            const modal = document.getElementById('confirmationModal');
+            const message = document.getElementById('confirmationMessage');
+            
+            message.textContent = `Are you sure you want to delete "${update.title}"? This action cannot be undone.`;
+            modal.classList.add('active');
+        }
+
+        // Close confirmation modal
+        function closeConfirmationModal() {
+            const modal = document.getElementById('confirmationModal');
+            modal.classList.remove('active');
+            deleteUpdateId = null;
+        }
+
+        // Confirm delete action
+        function confirmDelete() {
+            if (deleteUpdateId === null) return;
+            
+            // Remove update from array
+            updates = updates.filter(update => update.id !== deleteUpdateId);
+            saveUpdates();
+            renderUpdates();
+            
+            // Close modal
+            closeConfirmationModal();
+            
+            // Show success message
+            const deleteBtn = document.querySelector('.btn-danger');
+            const originalText = deleteBtn.textContent;
+            deleteBtn.textContent = 'Deleted!';
+            deleteBtn.style.backgroundColor = 'var(--green-accent)';
+            
+            setTimeout(() => {
+                deleteBtn.textContent = originalText;
+                deleteBtn.style.backgroundColor = '';
+            }, 2000);
+        }
+
+        // Toggle admin form
+        function toggleAdminForm() {
+            const form = document.getElementById('adminUpdateForm');
+            const toggleBtn = document.getElementById('adminToggleBtn');
+            
+            if (form.classList.contains('active')) {
+                form.classList.remove('active');
+                toggleBtn.textContent = 'Post New Update';
+            } else {
+                form.classList.add('active');
+                toggleBtn.textContent = 'Hide Form';
+            }
+        }
+
+        // Handle update form submission
+        document.getElementById('updateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const newUpdate = {
+                id: Date.now(),
+                title: formData.get('title'),
+                status: formData.get('status'),
+                category: formData.get('category'),
+                content: formData.get('content'),
+                tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag),
+                date: new Date().toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                })
+            };
+            
+            updates.unshift(newUpdate);
+            saveUpdates();
+            renderUpdates();
+            
+            // Reset form
+            this.reset();
+            toggleAdminForm();
+            
+            // Show success message
+            const submitBtn = this.querySelector('.btn-primary');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Posted!';
+            submitBtn.style.backgroundColor = 'var(--green-accent)';
+            
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.style.backgroundColor = '';
+            }, 2000);
+        });
+
+        // Filter updates
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter updates
+                const filter = this.getAttribute('data-filter');
+                renderUpdates(filter);
+            });
+        });
+
+        // Initialize updates when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUpdates();
+            checkAuth();
+        });
+
+        // Authentication Functions
+        function checkAuth() {
+            const savedAdmin = localStorage.getItem('foxsafety-admin');
+            if (savedAdmin && authorizedEmails.includes(savedAdmin)) {
+                currentAdmin = savedAdmin;
+                updateAdminUI();
+                return true;
+            }
+            return false;
+        }
+
+        function showAuthModal() {
+            const modal = document.getElementById('authModal');
+            modal.classList.add('active');
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('authModal');
+            modal.classList.remove('active');
+            document.getElementById('authEmail').value = '';
+            hideAuthStatus();
+        }
+
+        function hideAuthStatus() {
+            const status = document.getElementById('authStatus');
+            status.style.display = 'none';
+        }
+
+        function showAuthStatus(message, type) {
+            const status = document.getElementById('authStatus');
+            status.textContent = message;
+            status.className = `auth-status ${type}`;
+            status.style.display = 'block';
+        }
+
+        function login(email) {
+            if (authorizedEmails.includes(email.toLowerCase())) {
+                currentAdmin = email.toLowerCase();
+                localStorage.setItem('foxsafety-admin', currentAdmin);
+                updateAdminUI();
+                closeAuthModal();
+                showAuthStatus('Login successful!', 'success');
+                setTimeout(hideAuthStatus, 3000);
+                return true;
+            } else {
+                showAuthStatus('Access denied. This email is not authorized.', 'error');
+                return false;
+            }
+        }
+
+        function logout() {
+            currentAdmin = null;
+            localStorage.removeItem('foxsafety-admin');
+            adminMode = false;
+            updateAdminUI();
+            renderUpdates();
+        }
+
+        function updateAdminUI() {
+            const toggleBtn = document.getElementById('adminModeToggle');
+            const adminInfo = document.getElementById('adminInfo');
+            const adminEmail = document.getElementById('adminEmail');
+            
+            if (currentAdmin) {
+                toggleBtn.style.display = 'flex';
+                adminInfo.classList.add('active');
+                adminEmail.textContent = currentAdmin;
+                toggleBtn.onclick = () => {
+                    if (adminMode) {
+                        adminMode = false;
+                        toggleBtn.classList.remove('active');
+                        toggleBtn.innerHTML = '⚙️';
+                        toggleBtn.title = 'Toggle Admin Mode';
+                    } else {
+                        adminMode = true;
+                        toggleBtn.classList.add('active');
+                        toggleBtn.innerHTML = '🗑️';
+                        toggleBtn.title = 'Exit Admin Mode';
+                    }
+                    renderUpdates();
+                };
+            } else {
+                toggleBtn.style.display = 'none';
+                adminInfo.classList.remove('active');
+                toggleBtn.onclick = showAuthModal;
+            }
+        }
+
+        // Handle authentication form submission
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            login(email);
+        });
+
+        // Testimonials Carousel
+        let currentTestimonial = 0;
+        const testimonials = document.querySelectorAll('.testimonial-card');
+        const track = document.getElementById('testimonialsTrack');
+        const dots = document.querySelectorAll('.carousel-dot');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function updateCarousel() {
+            const translateX = -currentTestimonial * 100;
+            track.style.transform = `translateX(${translateX}%)`;
+            
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentTestimonial);
+            });
+        }
+
+        function nextTestimonial() {
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            updateCarousel();
+        }
+
+        function prevTestimonial() {
+            currentTestimonial = (currentTestimonial - 1 + testimonials.length) % testimonials.length;
+            updateCarousel();
+        }
+
+        nextBtn.addEventListener('click', nextTestimonial);
+        prevBtn.addEventListener('click', prevTestimonial);
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentTestimonial = index;
+                updateCarousel();
+            });
+        });
+
+        // Auto-rotate testimonials
+        setInterval(nextTestimonial, 5000);
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                const isActive = faqItem.classList.contains('active');
+                
+                // Close all FAQ items
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                }
+            });
+        });
+
+        // Newsletter Form
+        document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('.newsletter-input').value;
+            const button = this.querySelector('.newsletter-btn');
+            
+            // Simulate form submission
+            button.textContent = 'Subscribing...';
+            button.style.backgroundColor = 'var(--green-accent)';
+            
+            setTimeout(() => {
+                button.textContent = 'Subscribed!';
+                this.querySelector('.newsletter-input').value = '';
+                
+                setTimeout(() => {
+                    button.textContent = 'Subscribe';
+                    button.style.backgroundColor = '';
+                }, 2000);
+            }, 1500);
+        });
+
+        // Pricing Card Interactions
+        document.querySelectorAll('.pricing-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('featured')) {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                }
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('featured')) {
+                    this.style.transform = 'translateY(0) scale(1)';
+                }
+            });
+        });
+
+        // Team Card Interactions
+        document.querySelectorAll('.team-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Enhanced Button Interactions
+        document.querySelectorAll('.pricing-btn, .newsletter-btn').forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px) scale(1.05)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add ripple effect styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(135, 65, 226, 0.3);
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                pointer-events: none;
+            }
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    <script>
+        // Scroll-to-top behavior
+        const scrollBtn = document.getElementById('scrollTopBtn');
+        function updateScrollBtn() {
+            if (!scrollBtn) return;
+            const y = window.scrollY || document.documentElement.scrollTop;
+            if (y > 400) {
+                scrollBtn.classList.add('visible');
+            } else {
+                scrollBtn.classList.remove('visible');
+            }
+        }
+        window.addEventListener('scroll', updateScrollBtn, { passive: true });
+        updateScrollBtn();
+        if (scrollBtn) {
+            scrollBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+    </script>
+</body>
+</html>
